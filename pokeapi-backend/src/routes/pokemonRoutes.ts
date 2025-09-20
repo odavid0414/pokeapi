@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
-import { catchPokemon, releasePokemon } from "../services/pokemonService";
+import { catchPokemon, getPokemon, getPokemons, releasePokemon } from "../services/pokemonService";
 
 const pokemonRouter = Router();
 
