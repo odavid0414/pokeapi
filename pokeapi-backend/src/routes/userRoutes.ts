@@ -29,8 +29,6 @@ userRouter.post("/user/login", async (req, res) => {
     else {
         return res.status(401).json({ message: "No user found" });
     }
-
-    return res.json(user);
 });
 
 export default userRouter;

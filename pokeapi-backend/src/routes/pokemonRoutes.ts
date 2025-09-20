@@ -29,4 +29,25 @@ pokemonRouter.delete("/pokemon/:id", passport.authenticate("jwt", { session: fal
 
 });
 
+pokemonRouter.get("/pokemon/:id", passport.authenticate("jwt", { session: false }), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const pokemon = await getPokemon(Number(id), req.user!.id);
+        return res.json(pokemon);
+    } catch (error) {
+        console.log(error);
+        return res.json(null);
+    }
+});
+
+pokemonRouter.get("/pokemon", passport.authenticate("jwt", { session: false }), async (req, res) => {
+    try {
+        const pokemon = await getPokemons(req.user!.id);
+        return res.json(pokemon);
+    } catch (error) {
+        console.log(error);
+        return res.json(null);
+    }
+});
+
 export default pokemonRouter;

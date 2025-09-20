@@ -8,3 +8,13 @@ export async function releasePokemon(id: number, userId: number) {
     const pokemon = await prisma.pokemon.delete({ where: { id, userId } });
     return pokemon;
 }
+
+export async function getPokemons(userId: number) {
+    const pokemon = await prisma.pokemon.findMany({ where: { id: userId } });
+    return pokemon;
+}
+
+export async function getPokemon(id: number, userId: number) {
+    const pokemon = await prisma.pokemon.findUnique({ where: { id } });
+    return pokemon;
+}
