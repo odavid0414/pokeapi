@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  catches      UserPokemon[]
+}
+
+model Pokemon {
+  // PokéAPI szerinti numerikus ID-t használjuk elsődleges kulcsként
+  id                   Int             @id
+  name                 String          @unique
+  height               Int
+  weight               Int
+  sprite_front_default String?
+  fetchedAt            DateTime        @default(now())
+
+  abilities            PokemonAbility[]
+  types                PokemonType[]
+  catches              UserPokemon[]
+}
+
+model PokemonAbility {
+  id         Int     @id @default(autoincrement())
+  pokemonId  Int
+  ability    String
+  is_hidden  Boolean @default(false)
+  slot       Int?
+
+  pokemon    Pokemon @relation(fields: [pokemonId], references: [id])
+
+  @@unique([pokemonId, ability])
+}
+
+model Type {
+  id       Int           @id @default(autoincrement())
+  name     String        @unique
+  api_id   Int?          // ha szeretnéd a külső id-t is tárolni
+  pokemons PokemonType[]
+}
+
+model PokemonType {
+  id        Int     @id @default(autoincrement())
+  pokemonId Int
+  typeId    Int
+  slot      Int?
+
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+  type      Type    @relation(fields: [typeId], references: [id])
+
+  @@unique([pokemonId, typeId])
+}
+
+model UserPokemon {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  pokemonId Int
+  caughtAt  DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id])
+  pokemon   Pokemon @relation(fields: [pokemonId], references: [id])
+
+  @@unique([userId, pokemonId])
+}
