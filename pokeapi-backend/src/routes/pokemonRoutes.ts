@@ -42,7 +42,8 @@ pokemonRouter.get("/pokemon/:id", passport.authenticate("jwt", { session: false 
 
 pokemonRouter.get("/pokemon", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try {
-        const pokemon = await getPokemons(req.user!.id);
+        const { search, sortDir, sortBy } = req.query;
+        const pokemon = await getPokemons(req.user!.id, search as string, sortDir as string, sortBy as string);
         return res.json(pokemon);
     } catch (error) {
         console.log(error);
